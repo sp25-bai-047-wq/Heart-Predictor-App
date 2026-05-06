@@ -27,24 +27,37 @@ with st.form("prediction_form"):
     submit = st.form_submit_button("Predict Result")
 
 if submit:
-    # EXACT columns from your training data (Total 14)
+    # Model expects specific columns in a specific order. 
+    # Hum saare possible columns include kar rahe hain jo errors mein aaye hain.
     data = {
         'age': age, 'sex': sex, 'cp': cp, 'trestbps': trestbps, 'chol': chol,
         'fbs': 0, 'restecg': 1, 'thalach': thalach, 'exang': exang, 
         'oldpeak': oldpeak, 'slope': 1, 'ca': 0, 
-        'thal_1': 0, 'thal_2': 1, 'thal_reversible': 0  # Missing features fixed!
+        'thal_1': 0, 'thal_2': 1, 'thal_reversible': 0,
+        'thal_fixed': 0, 'thal_normal': 1
     }
     
+    # DataFrame banayein
     df_input = pd.DataFrame([data])
     
+    # Model sirf wahi columns uthaye ga jo usay chahiye (Internal Handle)
+    # Magar safer side ke liye hum catch block lagate hain
     try:
+        # Get feature names the model was trained on
+        trained_columns = model.feature_names_in_
+        df_input = df_input.reindex(columns=trained_columns, fill_value=0)
+        
         prediction = model.predict(df_input)
         probability = model.predict_proba(df_input)[0][1]
 
         st.divider()
         if prediction[0] == 1:
-            st.error(f"⚠️ High Risk! Probability: {probability*100:.2f}%")
+            st.error(f"⚠️ High Risk! Prediction: Heart Disease Detected")
+            st.write(f"Confidence Level: **{probability*100:.2f}%**")
         else:
-            st.success(f"✅ Low Risk! Probability: {probability*100:.2f}%")
+            st.success(f"✅ Low Risk! Prediction: No Heart Disease")
+            st.write(f"Confidence Level: **{(1-probability)*100:.2f}%**")
+            
     except Exception as e:
-        st.error(f"Prediction Error: {e}")
+        st.error(f"Technical Error: {e}")
+        st.info("Check if your model was trained on these exact columns.")
