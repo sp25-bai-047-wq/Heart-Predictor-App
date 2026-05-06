@@ -1,4 +1,3 @@
-
 import streamlit as st
 import joblib
 import numpy as np
@@ -31,11 +30,19 @@ with st.form("prediction_form"):
     submit = st.form_submit_button("Predict Result")
 
 if submit:
-    # Input data ko array mein convert karna (Humne 13 features use kiye the training mein)
-    # Baqi features ko default values de dete hain fillhal testing ke liye
-    features = [age, sex, cp, trestbps, chol, 0, 1, thalach, exang, oldpeak, 1, 0, 2]
-    prediction = model.predict([features])
-    probability = model.predict_proba([features])[0][1]
+    # UPDATED: Humne 14 columns provide karne hain (Jo model training ke waqt the)
+    # Humein features ko model ke expecting format mein lana hai
+    input_data = {
+        'age': age, 'sex': sex, 'cp': cp, 'trestbps': trestbps, 'chol': chol,
+        'fbs': 0, 'restecg': 1, 'thalach': thalach, 'exang': exang, 
+        'oldpeak': oldpeak, 'slope': 1, 'ca': 0, 'thal_fixed': 0, 'thal_normal': 1
+    }
+    
+    df_input = pd.DataFrame([input_data])
+    
+    # Prediction
+    prediction = model.predict(df_input)
+    probability = model.predict_proba(df_input)[0][1]
 
     st.divider()
     if prediction[0] == 1:
