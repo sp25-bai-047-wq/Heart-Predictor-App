@@ -27,12 +27,12 @@ with st.form("prediction_form"):
     submit = st.form_submit_button("Predict Result")
 
 if submit:
-    # EXACT column names and order from your training data
+    # EXACT column names and order based on your model's training
     data = {
         'age': age, 'sex': sex, 'cp': cp, 'trestbps': trestbps, 'chol': chol,
         'fbs': 0, 'restecg': 1, 'thalach': thalach, 'exang': exang, 
         'oldpeak': oldpeak, 'slope': 1, 'ca': 0, 
-        'thal_1': 0, 'thal_2': 1, 'thal_reversible': 0  # Fixed based on error
+        'thal_fixed': 0, 'thal_normal': 1 # Missing features fixed here
     }
     
     df_input = pd.DataFrame([data])
@@ -44,9 +44,7 @@ if submit:
         st.divider()
         if prediction[0] == 1:
             st.error(f"⚠️ High Risk! Probability: {probability*100:.2f}%")
-            st.write("Aapko doctor se ruju karna chahiye.")
         else:
             st.success(f"✅ Low Risk! Probability: {probability*100:.2f}%")
-            st.write("Mubarak ho! Aapka dil sehat-mand lag raha hai.")
     except Exception as e:
         st.error(f"Prediction Error: {e}")
