@@ -109,3 +109,47 @@ if st.button("Predict Heart Risk"):
     else:
         st.success(f"✅ **Low Risk!** Score: {prob*100:.1f}%")
         st.balloons()
+    # --- STEP: PDF REPORT GENERATION ---
+    from fpdf import FPDF
+
+    class PDF(FPDF):
+        def header(self):
+            self.set_font('Arial', 'B', 15)
+            self.cell(0, 10, 'Heart Health Assessment Report', 0, 1, 'C')
+            self.ln(5)
+
+    def generate_pdf(prob_val, risk_txt, user_data):
+        pdf = PDF()
+        pdf.add_page()
+        pdf.set_font("Arial", size=12)
+        
+        pdf.cell(200, 10, txt=f"Risk Score: {prob_val*100:.1f}%", ln=1)
+        pdf.cell(200, 10, txt=f"Assessment: {risk_txt}", ln=1)
+        pdf.ln(10)
+        
+        pdf.set_font("Arial", 'B', 12)
+        pdf.cell(200, 10, txt="Input Details:", ln=1)
+        pdf.set_font("Arial", size=10)
+        for key, value in user_data.items():
+            pdf.cell(200, 8, txt=f"{key}: {value}", ln=1)
+            
+        return pdf.output(dest='S').encode('latin-1')
+
+    # Data for PDF
+    user_summary = {
+        "BMI": bmi,
+        "High BP": "Yes" if high_bp == 1 else "No",
+        "Smoker": "Yes" if smoker == 1 else "No",
+        "Age Category": age,
+        "General Health": gen_hlth
+    }
+    
+    risk_label = "High Risk" if prob > 0.5 else "Low Risk"
+    pdf_bytes = generate_pdf(prob, risk_label, user_summary)
+
+    st.download_button(
+        label="📥 Download Full Health Report (PDF)",
+        data=pdf_bytes,
+        file_name="Heart_Health_Report.pdf",
+        mime="application/pdf"
+    )
