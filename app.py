@@ -78,6 +78,30 @@ if st.button("Predict Heart Risk"):
         }
     ))
     st.plotly_chart(fig)
+    # --- VISUAL 2: Local Risk Factors Text ---
+    st.write("---") # Horizontal line for separation
+    st.write("### 🔍 Key Factors Contributing to Your Score:")
+    
+    # We identify which 'Yes' inputs are known high-risk factors
+    major_risks = []
+    if high_bp == 1: major_risks.append("High Blood Pressure")
+    if smoker == 1: major_risks.append("Smoking History")
+    if stroke == 1: major_risks.append("Previous Stroke")
+    if diabetes == 2: major_risks.append("Diabetes")
+    if bmi > 28: major_risks.append(f"High BMI ({bmi})")
+    
+    if major_risks:
+        st.warning(f"Note: Your {', '.join(major_risks)} are significant risk indicators based on our data.")
+        # Minimalist Recommendations
+        st.write("#### 💡 Next Steps:")
+        if high_bp == 1 or high_chol == 1:
+            st.write("- Focus on a heart-healthy diet (low sodium).")
+        if smoker == 1:
+            st.write("- Consult resources for quitting smoking.")
+        if phys_activity == 0:
+            st.write("- Aim for at least 150 minutes of moderate activity per week.")
+    else:
+        st.success("Great! Based on your inputs, your primary health indicators look stable.")
     
     if prob > 0.5:
         st.error(f"⚠️ **High Risk!** Score: {prob*100:.1f}%")
