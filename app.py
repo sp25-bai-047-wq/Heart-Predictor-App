@@ -9,6 +9,7 @@ model = joblib.load('heart_model_v2.pkl')
 
 st.set_page_config(page_title="Heart Health AI Pro", layout="wide") # Wide layout for better visuals
 st.title("❤️ Pro Heart Disease Predictor")
+st.balloons()
 
 # Sidebar for Disclaimer
 st.sidebar.info("⚠️ **Disclaimer:** This tool is for educational purposes and based on statistical patterns. It is NOT a substitute for professional medical advice.")
