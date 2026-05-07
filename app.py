@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 
 # Model load karein
-model = joblib.load('heart_model.pkl')
+model = joblib.load('heart_model_v2.pkl')
 
 st.set_page_config(page_title="Heart Health Predictor", layout="centered")
 
